@@ -1,0 +1,164 @@
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Beams</th>
+        <th>Points</th>
+    </tr>
+    %%[
+    SET @Names = LookUpRows("Test_Ismail_CloudLearners", "Active", 1)
+    SET @RowCount = RowCount(@Names)
+    FOR @i = 1 TO @RowCount DO
+        SET @Beams = LookUp("Test_Ismail_CloudLearners_Beams", "BeamID", "CloudLearnerID", Field(Row(@Names, @i), "ID"))
+        SET @Points = LookUp("Test_Ismail_CloudLearners_Beams", "Points", "CloudLearnerID", Field(Row(@Names, @i), "ID"))
+    ]%%
+    <tr>
+        <td>%%=Field(Row(@Names, @i), "Name")=%%</td>
+        <td>%%=v(@Beams)=%%</td>
+        <td>%%=v(@Points)=%%</td>
+    </tr>
+    %%[NEXT @i]%%
+</table>
+
+<table border="1">
+    <tr><th>Name</th><th>Beams</th><th>Points</th></tr>
+    %%[SET @row = LookupRows("Test_Ismail_CloudLearners","Active",1)
+    FOR @i = 1 TO ROWCOUNT(@row) DO
+    SET @beams = 0
+    SET @points = 0
+    SET @rowb = LookupRows("Test_Ismail_CloudLearners_Beams","CloudLearnerID",Field(Row(@row,@i),"ID"))
+    FOR @b = 1 TO ROWCOUNT(@rowb) DO
+    IF NOT EMPTY(Field(Row(@rowb,@b),"Points")) THEN
+    SET @beams = add(1,@beams)
+    SET @points = add(@points, Field(Row(@rowb,@b),"Points"))
+    ENDIF
+    NEXT @b
+    ]%%
+    <tr>
+    <td>%%=Field(ROW(@row,@i),"Name")=%%</td>
+    <td>%%=v(@beams)=%%</td>
+    <td>%%=v(@points)=%%</td>
+    </tr>
+    %%[NEXT @i]%%
+</table>
+
+<table border="1">
+        <tr>
+        <th>Name</th><th>Beams</th><th>Points</th><th>Last Beam Completed</th>
+        </tr>
+       %%[
+       SET @Rowset = LookupRows('Test_Ismail_CloudLearners','Active','1')
+       FOR @i = 1 TO RowCount(@Rowset) DO
+       SET @rowbeams = LookupOrderedRows('Test_Ismail_CloudLearners_Beams',100,'CompleteDate Desc',
+       'CloudLearnerID',Field(Row(@Rowset,@i),'ID'))
+       SET @Points = 0
+       SET @Beams = 0
+       SET @LastBeam = ""
+       FOR @b = 1 TO ROWCOUNT(@rowbeams) DO
+       IF Field(Row(@rowbeams,@b),'Points') > 0 THEN
+       IF @b == 1 THEN
+       SET @LastBeam = Lookup('Test_Ismail_Beams', 'Name', 'ID',
+       Field(Row(@rowbeams,@b),'BeamID'))
+       ENDIF
+       SET @Points = add(@Points,Field(Row(@rowbeams,@b),'Points'))
+       SET @Beams = add(@Beams,1)
+       ENDIF
+       NEXT @b
+       ]%%
+        <tr>
+        <td>%%=Field(Row(@Rowset,@i),'Name')=%%</td>
+        <td>%%=v(@Beams)=%%</td>
+        <td>%%=v(@Points)=%%</td>
+        <td>%%=v(@LastBeam)=%%</td>
+        </tr>
+       %%[NEXT @i]%%
+</table>
+       
+<table border="1">
+        <tr>
+        <th>Name</th><th>Beams</th><th>Points</th><th>Last Beam Completed</th>
+        <th>Unfinished Beams</th>
+        </tr>
+        %%[
+        SET @Rowset = LookupRows('Test_Ismail_CloudLearners','Active','1')
+        FOR @i = 1 TO RowCount(@Rowset) DO
+        SET @rowbeams = LookupOrderedRows('Test_Ismail_CloudLearners_Beams',100,'CompleteDate
+        Desc', 'CloudLearnerID',Field(Row(@Rowset,@i),'ID'))
+        SET @Points = 0
+        SET @Beams = 0
+        SET @LastBeam = ""
+        SET @Unfinished = ""
+        FOR @b = 1 TO ROWCOUNT(@rowbeams) DO
+        IF Field(Row(@rowbeams,@b),'Points') > 0 THEN
+        IF @b == 1 THEN
+        SET @LastBeam = Lookup('Test_Ismail_Beams', 'Name', 'ID', Field(Row(@rowbeams,@b),'BeamID'))
+        ENDIF
+        SET @Points = add(@Points,Field(Row(@rowbeams,@b),'Points'))
+        SET @Beams = add(@Beams,1)
+        ELSE
+        SET @Unfinished = Concat(@Unfinished, Lookup('Test_Ismail_Beams', 'Name', 'ID',
+        Field(Row(@rowbeams,@b),'BeamID')), "<br>")
+        ENDIF
+        NEXT @b
+        ]%%
+        <tr>
+        <td>%%=Field(Row(@Rowset,@i),'Name')=%%</td>
+        <td>%%=v(@Beams)=%%</td>
+        <td>%%=v(@Points)=%%</td>
+        <td>%%=v(@LastBeam)=%%</td>
+        <td>%%=v(@Unfinished)=%%</td>
+        </tr>
+        %%[NEXT @i]%%
+</table>
+
+<table border="1">
+    <tr><th>Name</th><th>Beams</th><th>Points</th><th>Last Beam Completed</th>
+    <th>Unfinished Beams</th><th>Accuracy</th></tr>
+    %%[SET @row = LookupRows("Test_Ismail_CloudLearners","Active",1)
+    FOR @i = 1 TO ROWCOUNT(@row) DO
+    SET @beams = 0
+    SET @points = 0
+    SET @maxpoints = 0
+    SET @latestName = ""
+    SET @Unfinished = ""
+    SET @rowb = LookupOrderedRows("Test_Ismail_CloudLearners_Beams",0,"CompleteDate
+    DESC","CloudLearnerID",Field(Row(@row,@i),"ID"))
+    FOR @b = 1 TO ROWCOUNT(@rowb) DO
+    IF @b == 1 THEN
+    SET @latestName = Lookup("Test_Ismail_Beams","Name","ID",Field(Row(@rowb,@b),"BeamID"))
+    ENDIF
+    IF NOT EMPTY(Field(Row(@rowb,@b),"Points")) THEN
+    SET @beams = add(1,@beams)
+    SET @points = add(@points, Field(Row(@rowb,@b),"Points"))
+    SET @maxpoints = add(@maxpoints, Lookup("Test_Ismail_Beams","Points","ID",Field(Row(@rowb,@b),"BeamID")))
+    ELSE
+    SET @Unfinished = Concat(@Unfinished,Lookup("Test_Ismail_Beams","Name","ID",Field(Row(@rowb,@b),"BeamID")),"<br>")
+    ENDIF
+    NEXT @b
+    SET @Percent = FormatNumber(Divide(@points,@maxpoints),"P0")
+    ]%%
+    <tr>
+    <td>%%=Field(ROW(@row,@i),"Name")=%%</td>
+    <td>%%=v(@beams)=%%</td>
+    <td>%%=v(@points)=%%</td>
+    <td>%%=v(@latestName)=%%</td>
+    <td>%%=v(@Unfinished)=%%</td>
+    <td>%%=v(@Percent)=%%</td>
+    </tr>
+    %%[NEXT @i]%%
+</table>    
+
+%%[
+    SET @row = LookupRows("Test_Ismail_CloudLearners_Beams", "CloudLearnerID", ID)
+
+    SET @beams = 0
+    SET @points = 0
+
+    FOR @b = 1 TO ROWCOUNT(@row) DO
+        IF NOT EMPTY(Field(Row(@row, @b), "Points")) THEN
+            SET @beams = Add(1, @beams)
+            SET @points = Add(@points, Field(Row(@row, @b), "Points"))
+        ENDIF
+    NEXT @b
+]%%
+Hi %%Name%%,<br>
+You've Completed %%=v(@beams)=%% Beams and earned %%=v(@points)=%% Points.
