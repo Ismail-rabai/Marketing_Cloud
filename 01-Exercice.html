@@ -1,0 +1,78 @@
+%%[
+IF NOT EMPTY(PreferredName) THEN
+SET @name = PreferredName
+ELSE 
+SET @name = Firstname
+ENDIF
+
+IF PointsYTD >= 250 THEN 
+SET @Tier = "GOLD"
+ELSEIF PointsYTD >= 100 THEN
+SET @Tier = "Silver"
+ELSE 
+SET @Tier = "Bronze"
+ENDIF
+
+]%%
+Hello %%=v(@name)=%%, <br>
+We are excited to announce our new product lineup will be launching next month. As a valued %%=v(@Tier)=%% Tier Member, we want to ensure you continue to get access to the best products and deals.
+
+
+%%[
+IF LastPurchaseDays > 0 AND LastPurchaseDays <= 14 THEN
+]%%
+We are grateful for your continued interest in our products.
+%%[
+ELSE
+]%%
+We hope to see you enjoying our products again soon.
+%%[
+ENDIF
+]%%
+
+%%[
+IF (LastPurchaseDays < 7 AND LastPurchaseDays > 0) OR PurchasesYTD > 5 THEN
+]%%
+As a loyal customer, we would like to offer you a further 5%
+discount on your next purchase on our website. Use promo
+code "Thanks5" on checkout.
+%%[
+ENDIF
+]%%
+
+
+%%[
+IF FreeShipping OR JoinAgeDays < 90 OR PointsYTD >= 200 OR SpendYTD >= 1000 THEN
+]%%
+GET FREE SHIPPING ON YOUR NEXT ORDER!
+Use code "0Shipping" on checkout!
+%%[
+ENDIF
+]%%
+
+%%[
+IF NOT Marketing_FlashSales AND NOT Marketing_Campaigns THEN
+]%%
+You can stay up to date with our best sales by subscribing to our Flash Sales
+announcements, and get seasonal deals with our Campaigns Newsletter.
+%%[
+ELSEIF NOT Marketing_FlashSales AND Marketing_Campaigns THEN
+]%%
+You can stay up to date with our best sales by subscribing to our Flash Sales announcements.
+%%[
+ELSEIF Marketing_FlashSales AND NOT Marketing_Campaigns THEN
+]%%
+You can get access to great seasonal deals with our Campaigns Newsletter. Update your preferences to Subscribe!
+%%[
+ENDIF
+]%%
+
+%%[
+IF  PointsYTD >= 250 OR
+Divide(PointsYTD,Divide(Subtract(365,NextReviewDays),365)) >= 250 THEN
+]%%
+To celebrate the launch of our new product, we would like to invite you to a
+Launch Party. Please contact your Sales Representative to secure your spot.
+%%[
+ENDIF
+]%%

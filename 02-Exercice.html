@@ -1,0 +1,62 @@
+%%[FOR @i = 1 TO 10 DO
+Output(Concat(@i,"<br>"))
+NEXT @i]%%
+
+
+%%[ FOR @i = 1 TO 10 DO 
+IF MOD(@i,2) == 0 THEN
+]%%
+Even <br>
+%%[
+ELSE
+]%%
+%%=v(@i)=%% <br>
+%%[ENDIF]%%
+%%[NEXT @i]%%
+
+
+%%[FOR @i = 1 TO 100 DO
+IF MOD(@i,15) == 0 THEN SET @output = "FizzBuzz"
+ELSEIF MOD(@i,5) == 0 THEN SET @output = "Buzz"
+ELSEIF MOD(@i,3) == 0 THEN SET @output = "Fizz"
+ELSE SET @output = @i
+ENDIF
+Output(Concat(@output,"<br>"))
+NEXT @i]%%
+
+
+<table border="1">
+    %%[FOR @i = 0 TO 9 DO]%%
+        <tr>
+    %%[FOR @x = 1 TO 10 DO]%%
+        <td>
+        %%[SET @num = Add(Multiply(@i,10),@x)
+        IF MOD(@num,15) == 0 THEN SET @output = "FizzBuzz"
+        ELSEIF MOD(@num,5) == 0 THEN SET @output = "Buzz"
+        ELSEIF MOD(@num,3) == 0 THEN SET @output = "Fizz"
+        ELSE SET @output = @num
+        ENDIF]%%
+        %%=v(@output)=%%
+        </td>
+    %%[NEXT @x]%%
+        </tr>
+    %%[NEXT @i]%%
+</table>
+
+<table border="1">
+    %%[FOR @i = 0 TO 9 DO]%%
+     <tr>
+    %%[FOR @x = 1 TO 10 DO
+     SET @num = Add(Multiply(@i,10),@x)
+     IF MOD(@num,15) == 0 THEN SET @bgcolor = "Blue"
+     ELSEIF MOD(@num,5) == 0 THEN SET @bgcolor = "Green"
+     ELSEIF MOD(@num,3) == 0 THEN SET @bgcolor = "Red"
+     ELSE SET @bgcolor = "White"
+     ENDIF]%%
+     <td height="20px" width="20px"
+    bgcolor="%%=v(@bgcolor)=%%">%%=v(@num)=%%</td>
+    %%[NEXT @x]%%
+     </tr>
+    %%[NEXT @i]%%
+</table>
+    
