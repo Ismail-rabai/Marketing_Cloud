@@ -162,3 +162,40 @@
 ]%%
 Hi %%Name%%,<br>
 You've Completed %%=v(@beams)=%% Beams and earned %%=v(@points)=%% Points.
+
+
+
+%%[
+SET @rowLatest = LookupOrderedRows("Test_Ismail_CloudLearners_Beams",3,"CompleteDate Desc", "CloudLearnerID", ID)
+]%%
+
+%%=Lookup("Test_Ismail_Beams","Name","ID",Field(Row(@rowLatest,1), "BeamID"))=%% <br>
+%%=Field(Row(@rowLatest,1), "CompleteDate")=%%<br>
+%%=Field(Row(@rowLatest,1), "Points")=%% / %%=Lookup("Test_Ismail_Beams","Points","ID",Field(Row(@rowLatest,1), "BeamID"))=%% <br>
+
+
+
+%%[
+SET @Counter = 0
+SET @rowincomplete = LookupRows("Test_Ismail_CloudLearners_Beams", "CloudLearnerID", ID)
+FOR @d = 1 TO ROWCOUNT(@rowincomplete) DO
+        IF EMPTY(Field(Row(@rowincomplete, @d), "Points")) THEN
+        SET @Counter = add(@Counter,1)
+        IF @Counter == 1 Then
+        ]%%
+
+<b>Don't forget about these Beams</b><br>
+%%[ENDIF]%%
+<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="background-color: transparent; min-width: 100%; border-top: 0px;
+border-right: 0px; border-bottom: 1px solid #000000; border-left: 0px;" class="stylingblock-content-wrapper">
+  <tr>
+    <td class="stylingblock-content-wrapper camarker-inner">
+        %%=Lookup("Test_Ismail_Beams","Name","ID",Field(Row(@rowincomplete,@d), "BeamID"))=%%<br>
+        Earn Up to : %%=Lookup("Test_Ismail_Beams","Points","ID",Field(Row(@rowincomplete,@d), "BeamID"))=%%  Points<br>
+        %%=Field(Row(@rowincomplete,@d), "StartDate")=%% <br>
+
+    </td>
+  </tr>
+</table>
+%%[ENDIF
+NEXT @d ]%%
